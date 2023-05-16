@@ -1,36 +1,70 @@
-# Round Robin Tournament Generator
-You are organizing a tournament, so you need to build a matches table.
+# Bloom Filters
 
-The tournament is composed by 20 teams. It is a round-robin tournament (all-play-all), so it has 19 rounds, and each team plays once per round. Each team confront the others once in the tournament (each match does not repeat in the tournament).
+## What is a Bloom filter?
 
-Your mission is to implement a function "buildMatchesTable" that receives the number of teams (always a positive and even number) and returns a matrix. Each line of the matrix represents one round. Each column of the matrix represents one match. The match is represented as an array with two teams. Each team is represented as a number, starting from 1 until the number of teams.
+A Bloom filter is a space-efficient data structure created by computer scientist Burton Howard Bloom in 1970. 
 
-Example:
+A Bloom filter is used to test whether an element is a member of a set. The data structure is probabilistic rather than deterministic. This means that if the Bloom filter returns ‘true’ for a certain element, it means that most likely the element is present in the set. In other words, false positives are likely. 
+
+However, if the Bloom filter returns false, it is deterministic, meaning that the element is definitely not in the set. As such, false negatives are impossible.
+
+## Use cases:
+
+The servers of Akamai Technologies, a content delivery  provider, use Bloom filters to prevent "one-hit-wonders" from being stored in its disk caches. One-hit-wonders are web objects requested by users just once, something that Akamai found applied to nearly three-quarters of their caching infrastructure. Using a Bloom filter to detect the second request for a web object and caching that object only on its second request prevents one-hit wonders from entering the disk cache, significantly reducing disk workload and increasing disk cache hit rates.
+
+
+Google Bigtable,Apache HBase, and Apache Cassandra and PostgreSQL use Bloom filters to reduce the disk lookups for non-existent rows or columns. Avoiding costly disk lookups considerably increases the performance of a database query operation.
+
+
+The Google Chrome  web browser previously used a Bloom filter to identify malicious URLs. Any URL was first checked against a local Bloom filter, and only if the Bloom filter returned a positive result was a full check of the URL performed (and the user warned, if that too returned a positive result).
+
+
+Medium uses Bloom filters to avoid recommending articles a user has previously read.
+
+## Algorithm
+
+Algorithm:
+
+An empty Bloom filter is a bit array of m bits, all set to 0. There must also be k different hash functions defined, each of which maps or hashes some set element to one of the m array positions, generating a uniform random distribution.
+
+To add an element, feed it to each of the k hash functions to get k array positions. Set the bits at all these positions to 1.
+
+To query for an element (test whether it is in the set), feed it to each of the k hash functions to get k array positions. If any of the bits at these positions is 0, the element is definitely not in the set; if it were, then all the bits would have been set to 1 when it was inserted. If all are 1, then either the element is in the set, or the bits have by chance been set to 1 during the insertion of other elements, resulting in a false positive.
+
+## Pseudocode for Add
 
 ```
-buildMatchesTable(4)
+add(word, bitArray) {
+	hash1 = h1(word)
+	hash2 = h2(word)
+	hash3 = h3(word)
+	bitArray[hash1] = 1
+bitArray[hash2] = 1
+bitArray[hash3] = 1
+}
+```
+## Pseudocode for isPresent
+
+```
+isPresent(word, bitArray) {
+	hash1 = h1(word)
+	hash2 = h2(word)
+	hash3 = h3(word)
+	if (bitArray[hash1] == 0)
+		return false
+if (bitArray[hash2] == 0)
+	return false
+if (bitArray[hash3] ==0)
+return false
+return true 
+}
 ```
 
-Should return a matrix like that:
+## Assignment
 
-```
-[
-  [[1,2], [3, 4]],  // first round:  1 vs 2, 3 vs 4
-  [[1,3], [2, 4]],  // second round: 1 vs 3, 2 vs 4
-  [[1,4], [2, 3]]   // third round:  1 vs 4, 2 vs 3
-]
-```
+Implement a Bloom filter that adds words to a set and then checks if words are present or not.
 
-You should not care about the order of the teams in the match, nor the order of the matches in the round. You should just care about the rules of the tournament.
 
-## hint 1
-total rounds will always be number of teams minus 1
-
-## hint 2
-keep the first team fixed, but rotate all other teams each round until you get to the end
-
-## stretch goal
-accept an odd number of teams, and the whoever doesn't get matched up gets a "bye" that round.
 
 # C3ProjectTemplate
 
