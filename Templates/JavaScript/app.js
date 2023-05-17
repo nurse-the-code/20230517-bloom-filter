@@ -5,4 +5,18 @@ function doAllTheThings() {
     return true;
 }
 
-module.exports = { doAllTheThings };
+const hashFunction1 = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash += str.charCodeAt(i);
+    }
+    return hash % 43;
+}
+
+const add = (str, bitArray) => {
+    const hash1 = hashFunction1(str);
+
+    bitArray[hash1] = 1;
+}
+
+module.exports = { doAllTheThings, hashFunction1, add };
